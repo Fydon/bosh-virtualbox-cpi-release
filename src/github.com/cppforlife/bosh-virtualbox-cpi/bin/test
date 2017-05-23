@@ -11,6 +11,7 @@ let "result+=$?"
 echo -e "\n Running build script to confirm everything compiles..."
 $bin/build
 $bin/build-linux-amd64
+$bin/build-windows-amd64
 let "result+=$?"
 
 if [ $result -eq 0 ]; then

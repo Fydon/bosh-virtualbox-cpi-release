@@ -1,0 +1,11 @@
+#!/bin/bash
+
+set -e
+
+bin=$(dirname $0)
+
+export GOARCH=amd64
+export GOOS=windows
+export GOTOOLDIR=$(go env GOROOT)/pkg/windows_amd64
+
+$bin/build

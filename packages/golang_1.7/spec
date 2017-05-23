@@ -6,3 +6,4 @@ dependencies: []
 files:
 - golang_1.7/go1.7.4.linux-amd64.tar.gz
 - golang_1.7/go1.7.4.darwin-amd64.tar.gz
+- golang_1.7/go1.7.4.windows-amd64.zip
