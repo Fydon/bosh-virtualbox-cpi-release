@@ -1,9 +1,10 @@
+// +build windows
+
 package driver
 
 import (
 	"strings"
 
-	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 	boshfu "github.com/cloudfoundry/bosh-utils/fileutil"
 	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 	boshsys "github.com/cloudfoundry/bosh-utils/system"
