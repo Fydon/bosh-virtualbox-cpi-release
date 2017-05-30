@@ -24,3 +24,5 @@ manifests/bosh-state.json
 
 /pkg
 /bin
+
+gopath
