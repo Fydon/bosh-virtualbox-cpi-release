@@ -30,4 +30,4 @@ export GOARCH=amd64
 export GOOS=windows
 export GOTOOLDIR=$GOROOT/pkg/windows_amd64
 
-go build -o $BOSH_INSTALL_TARGET/bin/cpi-windows src/github.com/cppforlife/bosh-virtualbox-cpi/main/*.go
+go build -o $BOSH_INSTALL_TARGET/bin/cpi-windows.exe src/github.com/cppforlife/bosh-virtualbox-cpi/main/*.go
