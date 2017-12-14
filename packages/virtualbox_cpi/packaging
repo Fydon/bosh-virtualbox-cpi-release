@@ -25,3 +25,9 @@ export GOOS=linux
 export GOTOOLDIR=$GOROOT/pkg/linux_amd64
 
 go build -o $BOSH_INSTALL_TARGET/bin/cpi-linux src/github.com/cppforlife/bosh-virtualbox-cpi/main/*.go
+
+export GOARCH=amd64
+export GOOS=windows
+export GOTOOLDIR=$GOROOT/pkg/windows_amd64
+
+go build -o $BOSH_INSTALL_TARGET/bin/cpi-msys_nt-10.0 src/github.com/cppforlife/bosh-virtualbox-cpi/main/*.go

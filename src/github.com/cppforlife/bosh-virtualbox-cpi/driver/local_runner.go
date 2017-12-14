@@ -1,6 +1,7 @@
 package driver
 
 import (
+	"runtime"
 	"strings"
 
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
@@ -23,13 +24,22 @@ func NewLocalRunner(fs boshsys.FileSystem, cmdRunner boshsys.CmdRunner, logger b
 
 func (r LocalRunner) HomeDir() (string, error) {
 	// todo use fs?
-	output, _, err := r.Execute("sh", "-c", "eval echo ~`whoami`")
-	if err != nil {
-		return "", err
-	}
+	var output string
+	var err error
+	if runtime.GOOS == "windows" {
+		output, _, err = r.Execute("powershell", "-command", "'$env:USERPROFILE'")
+		if err != nil {
+			return "", err
+		}
+	} else {
+		output, _, err = r.Execute("sh", "-c", "eval echo ~`whoami`")
+		if err != nil {
+			return "", err
+		}
 
-	if strings.HasPrefix(output, "~") {
-		return "", bosherr.Errorf("Failed to expand path '%s'", output)
+		if strings.HasPrefix(output, "~") {
+			return "", bosherr.Errorf("Failed to expand path '%s'", output)
+		}
 	}
 
 	return strings.TrimSpace(output), nil
@@ -38,10 +48,18 @@ func (r LocalRunner) HomeDir() (string, error) {
 func (r LocalRunner) Execute(path string, args ...string) (string, int, error) {
 	r.logger.Debug(r.logTag, "Execute '%s %s'", path, strings.Join(args, "' '"))
 
-	cmd := boshsys.Command{
-		Name: path,
-		Args: args,
-		Env:  map[string]string{"PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"},
+	var cmd boshsys.Command
+	if runtime.GOOS == "windows" {
+		cmd = boshsys.Command{
+			Name: path,
+			Args: args,
+		}
+	} else {
+		cmd = boshsys.Command{
+			Name: path,
+			Args: args,
+			Env:  map[string]string{"PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"},
+		}
 	}
 
 	stdout, stderr, status, err := r.cmdRunner.RunComplexCommand(cmd)

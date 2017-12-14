@@ -6,3 +6,6 @@ golang_1.7/go1.7.4.linux-amd64.tar.gz:
   size: 84021919
   object_id: 9aca0fb8-0b64-454a-4989-845c4bfd1499
   sha: 2e5baf03d1590e048c84d1d5b4b6f2540efaaea1
+golang_1.7/go1.7.4.msys_nt-10.0-amd64.tar.gz:
+  size: 83154860
+  sha: 40e7b4584fc3904cef9ec17ef8ca4c12b7ae887e

@@ -1,6 +1,8 @@
 package stemcell
 
 import (
+	"runtime"
+
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 	boshlog "github.com/cloudfoundry/bosh-utils/logger"
 	apiv1 "github.com/cppforlife/bosh-cpi-go/apiv1"
@@ -61,9 +63,16 @@ func (s StemcellImpl) Delete() error {
 		}
 	}
 
-	_, _, err = s.runner.Execute("rm", "-rf", s.path)
-	if err != nil {
-		return bosherr.WrapErrorf(err, "Deleting stemcell '%s'", s.path)
+	if runtime.GOOS == "windows" {
+		_, _, err := s.runner.Execute("Remove-Item", "-Recurse", "-Force", s.path)
+		if err != nil {
+			return bosherr.WrapErrorf(err, "Deleting stemcell '%s'", s.path)
+		}
+	} else {
+		_, _, err = s.runner.Execute("rm", "-rf", s.path)
+		if err != nil {
+			return bosherr.WrapErrorf(err, "Deleting stemcell '%s'", s.path)
+		}
 	}
 
 	return nil

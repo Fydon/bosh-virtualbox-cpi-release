@@ -1,7 +1,9 @@
 package disk
 
 import (
+	"fmt"
 	"path/filepath"
+	"runtime"
 	"strconv"
 
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
@@ -50,9 +52,16 @@ func (f Factory) Create(size int) (Disk, error) {
 
 	disk := f.newDisk(apiv1.NewDiskCID(id))
 
-	_, _, err = f.runner.Execute("mkdir", "-p", disk.Path())
-	if err != nil {
-		return nil, bosherr.WrapError(err, "Creating disk parent")
+	if runtime.GOOS == "windows" {
+		_, _, err := f.runner.Execute(fmt.Sprintf("if( -Not ( Test-Path \"%s\" ) ) { New-Item -ItemType Directory \"%s\" }", disk.Path(), disk.Path()))
+		if err != nil {
+			return nil, bosherr.WrapError(err, "Creating disk parent")
+		}
+	} else {
+		_, _, err = f.runner.Execute("mkdir", "-p", disk.Path())
+		if err != nil {
+			return nil, bosherr.WrapError(err, "Creating disk parent")
+		}
 	}
 
 	_, err = f.driver.Execute(

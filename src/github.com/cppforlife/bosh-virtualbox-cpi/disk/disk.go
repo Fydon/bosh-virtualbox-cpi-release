@@ -2,6 +2,7 @@ package disk
 
 import (
 	"path/filepath"
+	"runtime"
 
 	bosherr "github.com/cloudfoundry/bosh-utils/errors"
 	boshlog "github.com/cloudfoundry/bosh-utils/logger"
@@ -47,9 +48,16 @@ func (d DiskImpl) Exists() (bool, error) {
 }
 
 func (d DiskImpl) Delete() error {
-	_, _, err := d.runner.Execute("rm", "-rf", d.path)
-	if err != nil {
-		return bosherr.WrapErrorf(err, "Deleting disk '%s'", d.path)
+	if runtime.GOOS == "windows" {
+		_, _, err := d.runner.Execute("Remove-Item", "-Recurse", "-Force", d.path)
+		if err != nil {
+			return bosherr.WrapErrorf(err, "Deleting disk '%s'", d.path)
+		}
+	} else {
+		_, _, err := d.runner.Execute("rm", "-rf", d.path)
+		if err != nil {
+			return bosherr.WrapErrorf(err, "Deleting disk '%s'", d.path)
+		}
 	}
 
 	return nil

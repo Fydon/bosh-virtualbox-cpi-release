@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -130,9 +131,16 @@ func (f Factory) upload(imagePath, stemcellPath string) error {
 		return bosherr.WrapErrorf(err, "Unpacking stemcell '%s' to '%s'", imagePath, tmpDir)
 	}
 
-	_, _, err = f.runner.Execute("mkdir", "-p", stemcellPath)
-	if err != nil {
-		return bosherr.WrapError(err, "Creating stemcell parent")
+	if runtime.GOOS == "windows" {
+		_, _, err := f.runner.Execute(fmt.Sprintf("if( -Not ( Test-Path \"%s\" ) ) { New-Item -ItemType Directory \"%s\" }", stemcellPath, stemcellPath))
+		if err != nil {
+			return bosherr.WrapError(err, "Creating stemcell parent")
+		}
+	} else {
+		_, _, err = f.runner.Execute("mkdir", "-p", stemcellPath)
+		if err != nil {
+			return bosherr.WrapError(err, "Creating stemcell parent")
+		}
 	}
 
 	switch f.opts.StorageController {
