@@ -49,7 +49,7 @@ func (n Networks) createHostOnly() (string, error) {
 }
 
 func (n Networks) configureHostOnly(name, gateway, netmask string) error {
-	args := []string{"hostonlyif", "ipconfig", name}
+	args := []string{"hostonlyif", "ipconfig", "'" + name + "'"}
 
 	if len(gateway) > 0 {
 		args = append(args, []string{"--ip", gateway, "--netmask", netmask}...)
@@ -63,7 +63,7 @@ func (n Networks) configureHostOnly(name, gateway, netmask string) error {
 }
 
 func (n Networks) cleanUpPartialHostOnlyCreate(name string) {
-	_, err := n.driver.Execute("hostonlyif", "remove", name)
+	_, err := n.driver.Execute("hostonlyif", "remove", "'"+name+"'")
 	if err != nil {
 		n.logger.Error("vm.network.Networks",
 			"Failed to clean up partially created host-only network '%s': %s", name, err)
